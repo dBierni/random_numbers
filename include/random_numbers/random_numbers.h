@@ -42,6 +42,7 @@
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/random/normal_distribution.hpp>
+#include <boost_1_72_0/boost/random/niederreiter_base2.hpp>
 
 namespace random_numbers
 {
@@ -59,6 +60,9 @@ public:
 
   /** \brief Constructor. Allow a seed to be specified for deterministic behaviour */
   RandomNumberGenerator(boost::uint32_t seed);
+
+  /** \brief Constructor. Allow a seed and dimension to be specified for quasi random generator */
+  RandomNumberGenerator(boost::uint32_t seed, boost::uint32_t dimension);
 
   /** \brief Generate a random real between 0 and 1 */
   double uniform01(void)
@@ -106,12 +110,25 @@ public:
    */
   boost::uint32_t getFirstSeed();
 
+    /**
+    * @brief Generate a quasi-random real within given bounds: [\e lower_bound, \e upper_bound)
+    * @param lower_bound The lower bound
+    * @param upper_bound The upper bound
+    */
+  double quasiReal(double lower_bound, double upper_bound)
+  {
+    std::cout << "quasiReal" <<std::endl;
+    return (upper_bound - lower_bound) * quasi_() + lower_bound;
+  }
+
 private:
   boost::mt19937 generator_;
   boost::uniform_real<> uniDist_;
   boost::normal_distribution<> normalDist_;
+  boost::random::niederreiter_base2 generator_quasi_;
   boost::variate_generator<boost::mt19937&, boost::uniform_real<> > uni_;
   boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > normal_;
+  boost::variate_generator<boost::random::niederreiter_base2&, boost::uniform_real<> > quasi_;
 };
 }
 

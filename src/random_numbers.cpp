@@ -76,16 +76,29 @@ random_numbers::RandomNumberGenerator::RandomNumberGenerator(void)
   , normalDist_(0, 1)
   , uni_(generator_, uniDist_)
   , normal_(generator_, normalDist_)
+  , generator_quasi_(2)
+  , quasi_(generator_quasi_,uniDist_)
 {
 }
 
 random_numbers::RandomNumberGenerator::RandomNumberGenerator(boost::uint32_t seed)
   : generator_(seed), uniDist_(0, 1), normalDist_(0, 1), uni_(generator_, uniDist_), normal_(generator_, normalDist_)
+  , generator_quasi_(2)
+  , quasi_(generator_quasi_,uniDist_)
 {
   // Because we manually specified a seed, we need to save it ourselves
   first_seed_ = seed;
 }
 
+random_numbers::RandomNumberGenerator::RandomNumberGenerator(boost::uint32_t seed, const boost::uint32_t dimension)
+  : generator_(seed), uniDist_(0, 1), normalDist_(0, 1), uni_(generator_, uniDist_), normal_(generator_, normalDist_)
+  , generator_quasi_(dimension)
+  , quasi_(generator_quasi_,uniDist_)
+{
+    // Because we manually specified a seed, we need to save it ourselves
+    first_seed_ = seed;
+    quasi_.engine().seed(seed);
+}
 // From: "Uniform Random Rotations", Ken Shoemake, Graphics Gems III,
 //       pg. 124-132
 void random_numbers::RandomNumberGenerator::quaternion(double value[4])
@@ -106,3 +119,4 @@ boost::uint32_t random_numbers::RandomNumberGenerator::getFirstSeed()
 {
   return first_seed_;
 }
+
