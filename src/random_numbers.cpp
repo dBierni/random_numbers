@@ -76,15 +76,23 @@ random_numbers::RandomNumberGenerator::RandomNumberGenerator(void)
   , normalDist_(0, 1)
   , uni_(generator_, uniDist_)
   , normal_(generator_, normalDist_)
-  , generator_quasi_(2)
-  , quasi_(generator_quasi_,uniDist_)
+  , generator_niederreiter_(2)
+  , generator_sobol_(2)
+  , generator_faure_(2)
+  , niederreiter_(generator_niederreiter_,uniDist_)
+  , sobol_(generator_sobol_,uniDist_)
+  , faure_(generator_faure_,uniDist_)
 {
 }
 
 random_numbers::RandomNumberGenerator::RandomNumberGenerator(boost::uint32_t seed)
   : generator_(seed), uniDist_(0, 1), normalDist_(0, 1), uni_(generator_, uniDist_), normal_(generator_, normalDist_)
-  , generator_quasi_(2)
-  , quasi_(generator_quasi_,uniDist_)
+  , generator_niederreiter_(2)
+  , generator_sobol_(2)
+  , generator_faure_(2)
+  , niederreiter_(generator_niederreiter_,uniDist_)
+  , sobol_(generator_sobol_,uniDist_)
+  , faure_(generator_faure_,uniDist_)
 {
   // Because we manually specified a seed, we need to save it ourselves
   first_seed_ = seed;
@@ -92,12 +100,18 @@ random_numbers::RandomNumberGenerator::RandomNumberGenerator(boost::uint32_t see
 
 random_numbers::RandomNumberGenerator::RandomNumberGenerator(boost::uint32_t seed, const boost::uint32_t dimension)
   : generator_(seed), uniDist_(0, 1), normalDist_(0, 1), uni_(generator_, uniDist_), normal_(generator_, normalDist_)
-  , generator_quasi_(dimension)
-  , quasi_(generator_quasi_,uniDist_)
+  , generator_niederreiter_(dimension)
+  , generator_sobol_(dimension)
+  , generator_faure_(dimension)
+  , niederreiter_(generator_niederreiter_,uniDist_)
+  , sobol_(generator_sobol_,uniDist_)
+  , faure_(generator_faure_,uniDist_)
 {
     // Because we manually specified a seed, we need to save it ourselves
     first_seed_ = seed;
-    quasi_.engine().seed(seed);
+    niederreiter_.engine().seed(seed);
+    sobol_.engine().seed(seed);
+    faure_.engine().seed(seed);
 }
 // From: "Uniform Random Rotations", Ken Shoemake, Graphics Gems III,
 //       pg. 124-132
